@@ -6,4 +6,18 @@ class User < ActiveRecord::Base
   def crop_avatar
     avatar.recreate_versions! if crop_x.present?
   end
+
+  def cropping?
+    !crop_x.blank? && !crop_y.blank? && !crop_w.blank? && !crop_h.blank?
+  end
+
+  def picture_geometry(style = :original)
+    @geometry ||= {}
+    @geometry[style] ||= Paperclip::Geometry.from_file(picture.path(style))
+  end
+
+  private
+  def reprocess_picture
+    picture.reprocess!
+  end
 end
